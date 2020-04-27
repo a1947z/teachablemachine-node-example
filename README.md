@@ -2,7 +2,7 @@
 A demonstration of using [Teachable Machine](https://teachablemachine.withgoogle.com/), which is intended to run in the browser, in Node. Based on the clever approach by [tr7zw](https://github.com/tr7zw) in their [original demo](https://github.com/tr7zw/teachablemachine-node-example).
 
 ## How It Works
-1. A workaround simulates in Node just enough of the browser parts required for Teachable Machine to work.
+1. A workaround is used to simulate in Node just enough of the browser parts required for Teachable Machine to work.
     * [jsdom](https://github.com/jsdom/jsdom) to emulate a subset of browser APIs.
     * [node-canvas](https://github.com/Automattic/node-canvas) to simulate the browser's canvas.
     * [node-fetch](https://github.com/node-fetch/node-fetch) to polyfill [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) for Node.
