@@ -1,29 +1,37 @@
-FROM node:16-bullseye
+# Stage 1: 构建 node_modules（含 canvas 编译）
+FROM node:16-bullseye as deps
 
-# 安装编译 native 模块的依赖，canvas 所需库全部列出
+WORKDIR /app
+COPY package*.json ./
+
 RUN apt-get update && apt-get install -y \
-    python3 \
-    make \
-    g++ \
+    build-essential \
     libcairo2-dev \
     libjpeg-dev \
     libpango1.0-dev \
     libgif-dev \
     librsvg2-dev \
+    python3 \
     && rm -rf /var/lib/apt/lists/*
 
-# 设置工作目录
+RUN npm install --build-from-source=canvas --legacy-peer-deps
+
+# Stage 2: 运行阶段镜像，复用依赖并安装必要系统库
+FROM node:16-bullseye
+
 WORKDIR /app
 
-# 拷贝项目文件
-COPY package*.json ./
+# ✅ 再装一遍运行时需要的系统依赖（不需要编译工具）
+RUN apt-get update && apt-get install -y \
+    libcairo2 \
+    libjpeg62-turbo \
+    libpango-1.0-0 \
+    libgif-dev \
+    librsvg2-2 \
+    && rm -rf /var/lib/apt/lists/*
 
-# 安装依赖（如果 canvas 在 package.json 中）：
-RUN npm config set  registry https://repo.huaweicloud.com/repository/npm/
-RUN npm install --legacy-peer-deps
-
-# 再拷贝剩下的源码
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 EXPOSE 3000
-CMD [ "node", "app.js" ]
+CMD ["npm", "start"]

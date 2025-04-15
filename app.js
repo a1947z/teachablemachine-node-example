@@ -41,7 +41,8 @@ async function configureEndPoints() {
   const modelPath = 'file://./model/model.json';
   const metadataPath = path.join(__dirname, 'model', 'metadata.json');
 
-  model = await tf.loadGraphModel(modelPath);
+  const model = await tf.loadGraphModel(tf.io.fileSystem('./model/model.json'));
+
   console.log('✅ 模型加载成功');
 
   const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
